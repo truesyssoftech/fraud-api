@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+scikit-learn
+pandas
+joblib
+tldextract
+requests
+openai
+python-dotenv
