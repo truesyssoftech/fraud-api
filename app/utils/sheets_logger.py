@@ -2,6 +2,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 import os
+import json
 
 SHEET_NAME = "Fraud Logs"
 
@@ -21,9 +22,11 @@ def init_sheets():
             "https://www.googleapis.com/auth/drive"
         ]
 
-        creds = ServiceAccountCredentials.from_json_keyfile_name(
-            "service_account.json", scope
-        )
+        creds_json = os.getenv("GOOGLE_CREDS_JSON")
+
+        creds_dict = json.loads(creds_json)
+
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 
         client = gspread.authorize(creds)
         sheet = client.open(SHEET_NAME).sheet1
