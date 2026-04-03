@@ -53,8 +53,8 @@ async def detect_message(req: MessageRequest):
         "llm": llm_result
     }
 
-    @router.post("/detect-readable")
-    async def detect_message_readable(req: MessageRequest):
+@router.post("/detect-readable")
+async def detect_message_readable(req: MessageRequest):
     text = req.message
 
     # ---------- RULE ENGINE ----------
