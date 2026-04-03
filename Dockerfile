@@ -1,33 +1,36 @@
 # ---------- BASE IMAGE ----------
 FROM python:3.10-slim
 
-# ---------- ENV SETTINGS ----------
+# ---------- ENV ----------
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # ---------- WORKDIR ----------
 WORKDIR /app
 
-# ---------- INSTALL SYSTEM DEPENDENCIES ----------
+# ---------- SYSTEM DEPENDENCIES ----------
 RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# ---------- COPY REQUIREMENTS FIRST (for caching) ----------
+# ---------- COPY REQUIREMENTS ----------
 COPY requirements.txt .
 
-# ---------- INSTALL PYTHON DEPENDENCIES ----------
+# ---------- INSTALL DEPENDENCIES ----------
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# ---------- COPY PROJECT FILES ----------
-COPY app/ app/
-COPY model/ model/
-COPY train_model.py .
-COPY .env .
+# ---------- COPY PROJECT ----------
+COPY . .
 
-# ---------- VERIFY MODEL EXISTS (DEBUG SAFETY) ----------
-RUN ls -lh model/
+# ---------- CREATE MODEL DIRECTORY ----------
+RUN mkdir -p model
+
+# ---------- TRAIN MODEL INSIDE CONTAINER ----------
+RUN python train_model.py
+
+# ---------- VERIFY MODEL (DEBUG) ----------
+RUN echo "=== MODEL FILES ===" && ls -lh model/
 
 # ---------- EXPOSE PORT ----------
 EXPOSE 8080
