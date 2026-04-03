@@ -6,6 +6,7 @@ from app.core.ml_engine import ml_predict
 from app.core.llm_engine import llm_analysis
 from app.core.fraud_engine import fraud_engine
 from app.utils.response_generator import generate_user_response
+from app.utils.sheets_logger import log_to_sheets
 
 router = APIRouter()
 
@@ -42,6 +43,11 @@ async def detect_message(req: MessageRequest):
         llm_output=llm_result
     )
 
+    log_to_sheets(
+        message=text,
+        final_label=fraud_result["final_label"],
+        confidence=fraud_result["confidence"]
+    )
     # ---------- FINAL RESPONSE ----------
     return {
         "final": fraud_result,
@@ -88,6 +94,12 @@ async def detect_message_readable(req: MessageRequest):
     user_message = generate_user_response(
         final_result=fraud_result,
         flags=all_flags
+    )
+
+    log_to_sheets(
+        message=text,
+        final_label=fraud_result["final_label"],
+        confidence=fraud_result["confidence"]
     )
 
     return {
