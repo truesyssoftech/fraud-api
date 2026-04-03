@@ -7,3 +7,4 @@ openai
 python-dotenv
 scikit-learn==1.7.2
 joblib==1.4.2
+numpy==1.26.4
